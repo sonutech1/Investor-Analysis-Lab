@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Classic investor formulas and screens — Greenblatt, Graham, Altman, Piotroski and more — calculated from your StatementLab inputs." />
+  <title>Investor formulas &amp; screens | StatementLab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,600;0,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #142422; --ink-soft: #405450; --muted: #71817d; --paper: #f5f6f1; --white: #fff;
+      --line: #dce4df; --navy: #173e38; --teal: #15766a; --mint: #dcefe6; --yellow: #dbe86f;
+      --coral: #d96f5e; --orange: #efae5e; --radius: 18px; --shadow: 0 16px 40px rgba(23, 62, 56, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "DM Sans", system-ui, sans-serif; line-height: 1.42; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { max-width: 1360px; margin: 0 auto; padding: 0 27px 44px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 21px 0 17px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; letter-spacing: -.6px; }
+    .brand-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: var(--navy); color: var(--yellow); font: 500 14px "DM Mono", monospace; }
+    .topnav { display: flex; align-items: center; gap: 7px; }
+    .topnav a { color: var(--muted); padding: 7px 9px; text-decoration: none; font-size: 13px; }
+    .topnav a:hover, .topnav a.active { color: var(--teal); font-weight: 700; }
+    .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 9px; background: var(--mint); color: var(--navy); font: 500 10px "DM Mono", monospace; letter-spacing: .04em; }
+    .hero { display: grid; grid-template-columns: 1.35fr .65fr; gap: 34px; align-items: end; padding: 38px 0 24px; }
+    .eyebrow { display: flex; align-items: center; gap: 8px; color: var(--teal); font: 500 11px "DM Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 23px; height: 1px; background: currentColor; }
+    h1 { margin: 12px 0 11px; max-width: 780px; font: 600 clamp(37px, 4.5vw, 60px)/1.03 "Playfair Display", Georgia, serif; letter-spacing: -2px; }
+    .lead { max-width: 710px; margin: 0; color: var(--ink-soft); font-size: 16px; }
+    .notice { padding: 17px 19px; background: var(--mint); border-radius: var(--radius); color: var(--ink-soft); font-size: 12px; }
+    .notice strong { display: block; margin-bottom: 4px; color: var(--navy); font-size: 13px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+    .btn { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: var(--white); color: var(--ink-soft); font-size: 12px; font-weight: 700; }
+    .btn:hover { border-color: var(--teal); color: var(--teal); }
+    .btn.primary { background: var(--navy); border-color: var(--navy); color: white; }
+    .btn.primary:hover { background: var(--teal); border-color: var(--teal); color: white; }
+    .workspace { display: grid; grid-template-columns: minmax(375px, .82fr) minmax(0, 1.18fr); gap: 20px; align-items: start; }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 2px 0 rgba(23,62,56,.01); }
+    .input-panel { overflow: hidden; }
+    .panel-title { padding: 21px 22px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    h2 { margin: 0; font-size: 18px; letter-spacing: -.5px; }
+    .subtext { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .completion { min-width: 99px; text-align: right; }
+    .completion span { display: block; color: var(--teal); font: 500 11px "DM Mono", monospace; }
+    .completion small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .completion-track { width: 100%; height: 5px; margin-top: 6px; overflow: hidden; border-radius: 99px; background: #e5ece8; }
+    .completion-track i { display: block; height: 100%; border-radius: inherit; background: var(--teal); transition: width .25s ease; }
+    .tabs { display: flex; gap: 2px; padding: 10px 11px 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+    .tab { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border: 0; border-bottom: 2px solid transparent; padding: 9px 10px 10px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .tab-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: #cfdad5; }
+    .tab.is-ready .tab-dot { background: var(--teal); }
+    .tab-content { display: none; padding: 18px 21px 22px; }
+    .tab-content.active { display: block; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 12px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    label { display: block; margin-bottom: 5px; color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+    .hint { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    input, select { width: 100%; min-width: 0; padding: 9px 10px; outline: none; border: 1px solid var(--line); border-radius: 8px; background: #fcfdfb; color: var(--ink); font-size: 13px; transition: .15s ease; }
+    input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(21,118,106,.1); }
+    input.invalid { border-color: var(--coral); background: #fff7f4; }
+    .input-prefix { position: relative; }
+    .input-prefix::before { content: attr(data-prefix); position: absolute; z-index: 1; left: 10px; top: 9px; color: var(--muted); font: 12px "DM Mono", monospace; }
+    .input-prefix input { padding-left: 26px; }
+    .form-note { display: flex; gap: 8px; margin-top: 16px; padding: 11px 12px; border-radius: 10px; background: #f4f7f4; color: var(--muted); font-size: 11px; }
+    .form-note b { color: var(--teal); }
+    .results { display: grid; gap: 20px; }
+    .summary { padding: 23px; background: var(--navy); color: white; border-radius: var(--radius); }
+    .summary-head { display: flex; justify-content: space-between; gap: 15px; align-items: flex-start; }
+    .summary h2 { font-size: 21px; }
+    .summary .subtext { color: rgba(255,255,255,.68); }
+    .summary-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-top: 23px; }
+    .summary-metric { border-left: 1px solid rgba(255,255,255,.18); padding-left: 12px; }
+    .summary-metric:first-child { padding-left: 0; border-left: 0; }
+    .summary-metric span { display: block; color: rgba(255,255,255,.61); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; }
+    .summary-metric strong { display: block; margin-top: 4px; color: var(--yellow); font: 500 21px "DM Mono", monospace; letter-spacing: -.7px; }
+    .section { padding: 21px 22px; }
+    .section-head { display: flex; justify-content: space-between; gap: 13px; align-items: baseline; margin-bottom: 15px; }
+    .section-head h2 { font-size: 17px; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 11px; }
+    .ratio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .ratio { padding: 13px; border-radius: 12px; background: #f5f8f5; }
+    .ratio .ratio-label { display: block; min-height: 29px; color: var(--muted); font-size: 11px; line-height: 1.23; }
+    .ratio strong { display: block; margin-top: 7px; color: var(--navy); font: 500 18px "DM Mono", monospace; letter-spacing: -.5px; }
+    .ratio small { display: block; min-height: 14px; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .formula-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .formula { width: 100%; padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: var(--white); color: var(--ink); text-align: left; transition: .18s ease; }
+    .formula:hover, .formula:focus-visible, .formula.selected { border-color: var(--teal); background: #f2f8f5; outline: none; }
+    .formula-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .formula h3 { margin: 0; font-size: 14px; letter-spacing: -.2px; }
+    .formula p { min-height: 34px; margin: 5px 0 11px; color: var(--muted); font-size: 10px; }
+    .formula-value { color: var(--teal); font: 500 24px "DM Mono", monospace; letter-spacing: -1px; }
+    .formula-value.na { color: var(--muted); font-size: 13px; letter-spacing: 0; }
+    .formula-note { margin-top: 7px; color: var(--ink-soft); font-size: 10px; }
+    .formula-code { display: block; margin-top: 9px; color: var(--muted); font: 10px "DM Mono", monospace; line-height: 1.35; }
+    .formula-code code { color: var(--teal); }
+    .formula-detail { display: grid; grid-template-columns: 1.1fr .9fr; gap: 15px; align-items: center; margin-top: 13px; padding: 14px 16px; border-radius: 12px; background: #f4f7f4; }
+    .formula-detail strong { display: block; color: var(--navy); font-size: 13px; }
+    .formula-detail p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .formula-detail code { display: block; color: var(--teal); text-align: right; font: 11px "DM Mono", monospace; }
+    .custom-section { padding: 21px 22px; }
+    .custom-form { display: grid; grid-template-columns: .7fr 1.35fr auto; gap: 9px; align-items: end; padding: 13px; background: var(--sand, #f5f1e5); border-radius: 13px; }
+    .custom-form label { margin: 0 0 5px; }
+    .custom-form .btn { padding: 9px 11px; white-space: nowrap; }
+    .custom-list { display: grid; gap: 7px; margin-top: 11px; }
+    .custom-row { display: grid; grid-template-columns: minmax(100px, .7fr) minmax(100px, 1.1fr) 86px 27px; align-items: center; gap: 9px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .custom-row:last-child { border-bottom: 0; }
+    .custom-name { font-size: 12px; font-weight: 700; }
+    .custom-expression { overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; font: 10px "DM Mono", monospace; }
+    .custom-result { color: var(--teal); text-align: right; font: 500 12px "DM Mono", monospace; }
+    .delete { width: 27px; height: 27px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 18px; }
+    .delete:hover { background: #fff0eb; color: var(--coral); }
+    .formula-help { margin: 12px 0 0; color: var(--muted); font-size: 10px; }
+    .formula-help code { color: var(--teal); font-family: "DM Mono", monospace; }
+    .empty { padding: 12px 0 1px; color: var(--muted); font-size: 12px; }
+    .scenario { padding: 21px 22px; }
+    .scenario-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 19px; align-items: center; }
+    .scenario-price { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+    .scenario-price span { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .scenario-price strong { color: var(--navy); font: 500 22px "DM Mono", monospace; letter-spacing: -.7px; }
+    input[type="range"] { accent-color: var(--teal); padding: 0; border: 0; background: transparent; }
+    .scenario-actions { display: flex; gap: 7px; margin-top: 12px; }
+    .scenario-actions .btn { flex: 1; padding: 7px 8px; font-size: 11px; }
+    .scenario-output { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .scenario-output div { min-height: 73px; padding: 11px; border-radius: 11px; background: var(--mint); }
+    .scenario-output span { display: block; color: var(--ink-soft); font-size: 10px; }
+    .scenario-output strong { display: block; margin-top: 5px; color: var(--navy); font: 500 16px "DM Mono", monospace; }
+    .scenario-note { margin: 9px 0 0; color: var(--muted); font-size: 10.5px; }
+    .scenario-range-labels { display: flex; justify-content: space-between; margin-top: 4px; color: var(--muted); font-size: 9.5px; }
+    .disclaimer { margin: 0; padding: 14px 18px; border-radius: 12px; background: #f1f3ef; color: var(--muted); font-size: 10px; }
+    .section-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; text-decoration: none; color: inherit; transition: .15s ease; }
+    .section-link:hover { border-color: var(--teal); background: #f2f8f5; }
+    .section-link h2 { font-size: 15px; }
+    .section-link .subtext { margin-top: 3px; max-width: 520px; }
+    .section-link-arrow { flex: 0 0 auto; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--mint); color: var(--navy); font-size: 15px; transition: transform .15s ease; }
+    .section-link:hover .section-link-arrow { transform: translateX(3px); }
+    .toast { position: fixed; z-index: 10; right: 22px; bottom: 22px; max-width: 320px; padding: 12px 14px; border-radius: 11px; background: var(--navy); color: white; box-shadow: var(--shadow); font-size: 12px; opacity: 0; pointer-events: none; transform: translateY(9px); transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .footer { display: flex; justify-content: space-between; gap: 14px; padding: 24px 0 0; color: var(--muted); font-size: 10px; }
+
+    /* ── Paste import ── */
+    .paste-panel { margin-top: 13px; padding: 13px; border-radius: 12px; background: #f4f7f4; border: 1px dashed var(--line); }
+    .paste-panel textarea { width: 100%; min-height: 84px; margin-top: 8px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); color: var(--ink); font: 11px "DM Mono", monospace; resize: vertical; }
+    .paste-panel textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(21,118,106,.1); }
+    .paste-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .paste-head span { color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+    .paste-actions { display: flex; gap: 7px; margin-top: 9px; }
+    .paste-actions .btn { padding: 7px 10px; font-size: 11px; }
+    .paste-result { margin-top: 8px; color: var(--muted); font-size: 10px; }
+    .paste-result.warn { color: var(--coral); }
+    .paste-result.ok { color: var(--teal); }
+    [hidden] { display: none !important; }
+
+    /* ── Data quality check ── */
+    .quality { display: grid; gap: 8px; }
+    .quality-row { display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border-radius: 10px; background: #f5f8f5; font-size: 11px; color: var(--ink-soft); }
+    .quality-row.warn { background: #fff5f1; color: #8a4636; }
+    .quality-row.good { background: var(--mint); color: var(--navy); }
+    .quality-dot { flex: 0 0 auto; width: 7px; height: 7px; margin-top: 3px; border-radius: 50%; background: var(--teal); }
+    .quality-row.warn .quality-dot { background: var(--coral); }
+    .quality-row.good .quality-dot { background: var(--teal); }
+
+    /* ── Trend / YoY comparison ── */
+    .trend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .trend-card { padding: 13px; border-radius: 12px; background: #f5f8f5; }
+    .trend-label { display: block; color: var(--muted); font-size: 11px; }
+    .trend-values { display: flex; align-items: baseline; gap: 7px; margin-top: 7px; }
+    .trend-values strong { color: var(--navy); font: 500 17px "DM Mono", monospace; letter-spacing: -.4px; }
+    .trend-values .prior { color: var(--muted); font-size: 10px; }
+    .trend-delta { display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; padding: 2px 7px; border-radius: 999px; font: 500 10px "DM Mono", monospace; }
+    .trend-delta.up { background: var(--mint); color: var(--navy); }
+    .trend-delta.down { background: #fff0eb; color: var(--coral); }
+    .trend-delta.flat { background: #f0f1ee; color: var(--muted); }
+    .trend-empty { padding: 14px; border-radius: 12px; background: #f5f8f5; color: var(--muted); font-size: 12px; }
+
+    /* ── Methodology ── */
+    .method-list { display: grid; gap: 14px; }
+    .method-item { padding: 15px 17px; border: 1px solid var(--line); border-radius: 13px; }
+    .method-item h3 { margin: 0 0 4px; font-size: 13px; letter-spacing: -.2px; }
+    .method-item p { margin: 4px 0; color: var(--ink-soft); font-size: 11.5px; line-height: 1.5; }
+    .method-item .method-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; color: var(--muted); font-size: 10px; }
+    .method-item .method-meta b { color: var(--teal); font-weight: 700; }
+    .method-item .method-limits { margin-top: 7px; padding: 9px 11px; border-radius: 9px; background: #fff5f1; color: #8a4636; font-size: 10.5px; }
+
+    @media (max-width: 1030px) { .workspace { grid-template-columns: 1fr; } .input-panel { max-width: none; } }
+    @media (max-width: 680px) {
+      .app { padding: 0 15px 30px; } .topnav a { display: none; } .hero { grid-template-columns: 1fr; gap: 18px; padding-top: 33px; } h1 { letter-spacing: -1.5px; }
+      .summary-metrics { grid-template-columns: 1fr 1fr; } .summary-metric:nth-child(3) { border-left: 0; padding-left: 0; } .ratio-grid, .formula-grid { grid-template-columns: 1fr 1fr; } .scenario-grid, .formula-detail { grid-template-columns: 1fr; } .formula-detail code { text-align: left; }
+      .custom-form { grid-template-columns: 1fr; } .custom-form .btn { width: 100%; } .custom-row { grid-template-columns: minmax(80px,.8fr) minmax(80px,1fr) 68px 25px; }
+      .footer { flex-direction: column; } .field-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; }
+      .trend-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+
+    .page-head { padding: 34px 0 22px; }
+    .page-head .eyebrow { margin-bottom: 10px; }
+    .page-head h1 { font-size: clamp(28px, 3.4vw, 40px); max-width: 640px; }
+    .page-head .lead { max-width: 640px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; color: var(--teal); font-size: 12px; font-weight: 700; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+    .empty-state { padding: 40px 30px; text-align: center; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--ink-soft); }
+    .empty-state h2 { font-size: 16px; margin-bottom: 6px; }
+    .empty-state a.btn { display: inline-flex; margin-top: 14px; text-decoration: none; }
+    .formula { cursor: pointer; }
+    .formula-grid { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 900px) { .formula-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 620px) { .formula-grid { grid-template-columns: 1fr; } }
+  </style>
+
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">Σ</span> StatementLab</div>
+      <nav class="topnav" aria-label="Primary navigation"><a href="index.html#analysis">Analysis</a><a href="index.html#trend">Trend</a><a class="active" href="formulas.html">Formula library</a><a href="index.html#custom-formulas">Custom formulas</a><a href="methodology.html">Methodology</a><span class="badge">LOCAL · NO DATA UPLOAD</span></nav>
+    </header>
+
+    <section class="page-head">
+      <div class="eyebrow">Financial statement intelligence</div>
+      <h1>Investor formulas &amp; screens</h1>
+      <p class="lead">Classic value, quality and distress-risk formulas — Greenblatt, Graham, Altman, Piotroski and more — plus a valuation scenario lab, all calculated live from the company data you entered on the Analysis page.</p>
+      <p class="subtext" style="margin-top:6px;">Formula sources and limitations live on the <a href="methodology.html">Methodology &amp; limitations</a> page.</p>
+    </section>
+
+    <div id="emptyState" class="empty-state" hidden>
+      <h2>No company data yet</h2>
+      <p>Enter a company's financials on the Analysis page and these formulas will calculate automatically.</p>
+      <a class="btn primary" href="index.html">Go to Analysis</a>
+    </div>
+
+    <section id="formulaContent" hidden>
+      <div class="summary-head" style="margin-bottom:14px;"><div><h2 id="formulaCompanyName">—</h2><p class="subtext" id="formulaCompanyPeriod"></p></div></div>
+      <div class="results">
+        <section class="card section">
+          <div class="section-head"><div><h2>Formula results</h2><p>Click any card to inspect the calculation basis and read its limitations.</p></div></div>
+          <div class="formula-grid" id="formulaGrid"></div>
+          <div class="formula-detail" id="formulaDetail" aria-live="polite"><div><strong>Select a formula card to inspect it.</strong><p>Each method has a different purpose, universe of comparison and set of limitations. See the <a href="methodology.html">Methodology &amp; limitations</a> page for full detail.</p></div><code>Click any card for the calculation basis</code></div>
+        </section>
+
+        <section class="card scenario" aria-labelledby="scenario-title">
+          <div class="section-head"><div><h2 id="scenario-title">Valuation scenario lab</h2><p>Drag the slider to see how price-led ratios move.</p></div><span class="badge">WHAT-IF</span></div>
+          <div class="scenario-grid">
+            <div>
+              <div class="scenario-price"><span>Hypothetical share price</span><strong id="scenarioPrice">—</strong></div>
+              <input id="scenarioRange" type="range" min="50" max="150" step="1" value="100" aria-label="Hypothetical share price, percent of base" />
+              <div class="scenario-range-labels"><span>−50%</span><span>Base</span><span>+50%</span></div>
+              <div class="scenario-actions"><button class="btn" type="button" data-scenario="85">−15%</button><button class="btn primary" type="button" data-scenario="100">Base</button><button class="btn" type="button" data-scenario="115">+15%</button></div>
+              <p class="scenario-note" id="scenarioNote"></p>
+            </div>
+            <div class="scenario-output">
+              <div><span>Scenario P/E</span><strong id="scenarioPe">—</strong></div>
+              <div><span>Scenario P/FCF</span><strong id="scenarioPfcf">—</strong></div>
+              <div><span>vs. Graham revised value</span><strong id="scenarioGraham">—</strong></div>
+              <div><span>Scenario market cap</span><strong id="scenarioMarketCap">—</strong></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <p class="disclaimer" style="margin-top:16px;">StatementLab is an educational portfolio project. Formula outputs are not a recommendation to buy, sell or hold a security. See <a href="methodology.html">methodology &amp; limitations</a> for sourcing and caveats.</p>
+
+    <footer class="footer"><span>© 2026 StatementLab · Financial analysis portfolio project</span><span>Formulas use data saved locally in your browser · Nothing is uploaded</span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const DATA_STORAGE_KEY = 'statementlab-current-data-v1';
+    function number(value) { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : 0; }
+    function supplied(value) { return value !== '' && value !== null && value !== undefined && Number.isFinite(Number(value)); }
+    function divide(numerator, denominator) { return denominator ? numerator / denominator : null; }
+    function pct(value) { return value === null || !Number.isFinite(value) ? '—' : `${(value * 100).toFixed(Math.abs(value) < .1 ? 1 : 0)}%`; }
+    function multiple(value) { return value === null || !Number.isFinite(value) ? '—' : `${value.toFixed(Math.abs(value) < 10 ? 2 : 1)}x`; }
+    function money(value, currency = 'USD') {
+      if (value === null || !Number.isFinite(value)) return '—';
+      const sign = value < 0 ? '−' : '';
+      const abs = Math.abs(value);
+      const suffix = abs >= 1e9 ? 'B' : abs >= 1e6 ? 'M' : abs >= 1e3 ? 'K' : '';
+      const denominator = abs >= 1e9 ? 1e9 : abs >= 1e6 ? 1e6 : abs >= 1e3 ? 1e3 : 1;
+      return `${sign}${currency} ${(abs / denominator).toLocaleString(undefined, { maximumFractionDigits: abs / denominator < 10 ? 2 : 1 })}${suffix}`;
+    }
+    function score(value) { return value === null || !Number.isFinite(value) ? 'Not available' : value.toFixed(1); }
+    function days(value) { return value === null || !Number.isFinite(value) ? '—' : `${value.toFixed(0)} days`; }
+    function setInput(key, value) { const field = document.querySelector(`[data-key="${key}"]`); if (field) field.value = value ?? ''; }
+    function getData() {
+      const data = { ...DEFAULTS };
+      FIELD_KEYS.forEach(key => {
+        const field = document.querySelector(`[data-key="${key}"]`);
+        if (!field) return;
+        data[key] = ['companyName','currency','period'].includes(key) ? field.value.trim() : number(field.value);
+      });
+      data.currency = data.currency || 'USD';
+      return data;
+    }
+    function average(current, previous) { return previous ? (current + previous) / 2 : current; }
+
+    function calculate(data) {
+      const debt = data.shortDebt + data.longDebt;
+      const marketCap = data.marketCap || data.sharePrice * data.sharesOutstanding;
+      const enterpriseValue = marketCap + debt - data.cash;
+      const ebitda = data.ebit + data.depreciation;
+      const freeCashFlow = data.operatingCashFlow - data.capex;
+      const workingCapital = data.currentAssets - data.currentLiabilities;
+      const netWorkingCapital = (data.currentAssets - data.cash) - (data.currentLiabilities - data.shortDebt);
+      const eps = divide(data.netIncome, data.sharesOutstanding);
+      const bookValuePerShare = divide(data.totalEquity, data.sharesOutstanding);
+      const grossProfit = data.revenue - data.cogs;
+      const averageAssets = average(data.totalAssets, data.previousAssets);
+      const averageEquity = average(data.totalEquity, data.previousEquity);
+      const taxRateDecimal = data.taxRate / 100;
+      const nopat = data.ebit * (1 - taxRateDecimal);
+      const investedCapital = debt + data.totalEquity - data.cash;
+      const returnOnAssets = divide(data.netIncome, averageAssets);
+      const returnOnEquity = divide(data.netIncome, averageEquity);
+      const roic = divide(nopat, investedCapital);
+      const revenueGrowth = data.previousRevenue ? divide(data.revenue - data.previousRevenue, data.previousRevenue) : null;
+      const grossMargin = divide(grossProfit, data.revenue);
+      const operatingMargin = divide(data.ebit, data.revenue);
+      const netMargin = divide(data.netIncome, data.revenue);
+      const ebitdaMargin = divide(ebitda, data.revenue);
+      const currentRatio = divide(data.currentAssets, data.currentLiabilities);
+      const quickRatio = divide(data.currentAssets - data.inventory, data.currentLiabilities);
+      const cashRatio = divide(data.cash, data.currentLiabilities);
+      const debtToEquity = divide(debt, data.totalEquity);
+      const debtToAssets = divide(debt, data.totalAssets);
+      const interestCoverage = divide(data.ebit, data.interestExpense);
+      const assetTurnover = divide(data.revenue, averageAssets);
+      const inventoryTurnover = divide(data.cogs, data.inventory);
+      const receivablesTurnover = divide(data.revenue, data.receivables);
+      const dso = divide(data.receivables, data.revenue) === null ? null : divide(data.receivables, data.revenue) * 365;
+      const dio = divide(data.inventory, data.cogs) === null ? null : divide(data.inventory, data.cogs) * 365;
+      const dpo = divide(data.accountsPayable, data.cogs) === null ? null : divide(data.accountsPayable, data.cogs) * 365;
+      const cashConversionCycle = dso !== null && dio !== null && dpo !== null ? dso + dio - dpo : null;
+      const pe = divide(data.sharePrice, eps);
+      const pb = divide(data.sharePrice, bookValuePerShare);
+      const ps = divide(marketCap, data.revenue);
+      const pfcf = divide(marketCap, freeCashFlow);
+      const evEbit = divide(enterpriseValue, data.ebit);
+      const evEbitda = divide(enterpriseValue, ebitda);
+      const peg = data.expectedGrowth ? divide(pe, data.expectedGrowth) : null;
+      const earningsYield = divide(data.ebit, enterpriseValue);
+      const greenblattROC = divide(data.ebit, netWorkingCapital + data.ppe);
+      const grahamNumber = eps !== null && bookValuePerShare !== null && eps > 0 && bookValuePerShare > 0 ? Math.sqrt(22.5 * eps * bookValuePerShare) : null;
+      const grahamIntrinsic = eps !== null && data.expectedGrowth && data.bondYield ? eps * (8.5 + 2 * data.expectedGrowth) * 4.4 / data.bondYield : null;
+      const altmanZ = data.totalAssets && data.totalLiabilities ? 1.2 * divide(workingCapital, data.totalAssets) + 1.4 * divide(data.retainedEarnings, data.totalAssets) + 3.3 * divide(data.ebit, data.totalAssets) + .6 * divide(marketCap, data.totalLiabilities) + divide(data.revenue, data.totalAssets) : null;
+      const ruleOf40 = revenueGrowth !== null && ebitdaMargin !== null ? revenueGrowth + ebitdaMargin : null;
+      const dupont = netMargin !== null && assetTurnover !== null && returnOnEquity !== null ? netMargin * assetTurnover * divide(averageAssets, averageEquity) : null;
+      const previousRoa = data.previousAssets ? divide(data.previousNetIncome, data.previousAssets) : null;
+      const previousGrossMargin = data.previousRevenue ? divide(data.previousRevenue - data.previousCogs, data.previousRevenue) : null;
+      const previousAssetTurnover = data.previousAssets ? divide(data.previousRevenue, data.previousAssets) : null;
+      const previousCurrentRatio = divide(data.previousCurrentAssets, data.previousCurrentLiabilities);
+      const previousNetMargin = data.previousRevenue ? divide(data.previousNetIncome, data.previousRevenue) : null;
+      const netIncomeGrowth = data.previousNetIncome ? divide(data.netIncome - data.previousNetIncome, Math.abs(data.previousNetIncome)) : null;
+      const assetsGrowth = data.previousAssets ? divide(data.totalAssets - data.previousAssets, data.previousAssets) : null;
+      const longDebtGrowth = data.previousLongDebt ? divide(data.longDebt - data.previousLongDebt, data.previousLongDebt) : null;
+      const sharesGrowth = data.previousShares ? divide(data.sharesOutstanding - data.previousShares, data.previousShares) : null;
+      const piotroskiInputsPresent = data.previousAssets && data.previousRevenue && data.previousCurrentAssets && data.previousCurrentLiabilities;
+      let piotroski = null;
+      if (piotroskiInputsPresent) {
+        const checks = [
+          returnOnAssets > 0,
+          data.operatingCashFlow > 0,
+          previousRoa !== null && returnOnAssets > previousRoa,
+          data.operatingCashFlow > data.netIncome,
+          data.previousLongDebt ? data.longDebt <= data.previousLongDebt : false,
+          previousCurrentRatio !== null && currentRatio > previousCurrentRatio,
+          data.previousShares ? data.sharesOutstanding <= data.previousShares : false,
+          previousGrossMargin !== null && grossMargin > previousGrossMargin,
+          previousAssetTurnover !== null && assetTurnover > previousAssetTurnover
+        ];
+        piotroski = checks.filter(Boolean).length;
+      }
+      return { debt, marketCap, enterpriseValue, ebitda, freeCashFlow, workingCapital, netWorkingCapital, eps, bookValuePerShare, grossProfit, nopat, investedCapital, returnOnAssets, returnOnEquity, roic, revenueGrowth, grossMargin, operatingMargin, netMargin, ebitdaMargin, currentRatio, quickRatio, cashRatio, debtToEquity, debtToAssets, interestCoverage, assetTurnover, inventoryTurnover, receivablesTurnover, dso, dio, dpo, cashConversionCycle, pe, pb, ps, pfcf, evEbit, evEbitda, peg, earningsYield, greenblattROC, grahamNumber, grahamIntrinsic, altmanZ, ruleOf40, dupont, piotroski, previousRoa, previousGrossMargin, previousAssetTurnover, previousCurrentRatio, previousNetMargin, netIncomeGrowth, assetsGrowth, longDebtGrowth, sharesGrowth };
+    }
+
+    function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char])); }
+
+    function loadData() {
+      try { return JSON.parse(localStorage.getItem(DATA_STORAGE_KEY)); } catch { return null; }
+    }
+
+    function render() {
+      const data = loadData();
+      const hasData = data && (data.revenue || data.companyName || data.totalAssets);
+      document.querySelector('#emptyState').hidden = !!hasData;
+      document.querySelector('#formulaContent').hidden = !hasData;
+      if (!hasData) return;
+
+      const m = calculate(data);
+      document.querySelector('#formulaCompanyName').textContent = data.companyName || 'Unnamed company';
+      document.querySelector('#formulaCompanyPeriod').textContent = data.period ? `${data.period} · ${data.currency} reporting currency` : data.currency;
+
+      const altmanNote = m.altmanZ === null ? 'Needs sales, assets, EBIT, retained earnings, market cap and liabilities.' : m.altmanZ > 2.99 ? 'Above 2.99: traditional safe zone.' : m.altmanZ > 1.81 ? '1.81–2.99: traditional grey zone.' : 'Below 1.81: traditional distress zone.';
+      const formulas = [
+        ['Joel Greenblatt — earnings yield', pct(m.earningsYield), 'EBIT / enterprise value. Higher is generally favored within a comparable universe.', 'EBIT ÷ (market cap + debt − cash)'],
+        ['Joel Greenblatt — return on capital', pct(m.greenblattROC), 'EBIT / (net working capital + net fixed assets). Ranking needs a peer universe.', 'EBIT ÷ (NWC + net PP&E)'],
+        ['Benjamin Graham number', money(m.grahamNumber, data.currency), 'A conservative price screen based on EPS and book value per share.', '√(22.5 × EPS × BVPS)'],
+        ['Graham revised intrinsic value', money(m.grahamIntrinsic, data.currency), 'Uses expected earnings growth and the current AAA corporate-bond yield.', 'EPS × (8.5 + 2g) × 4.4 ÷ Y'],
+        ['Altman Z-score', score(m.altmanZ), altmanNote, '1.2A + 1.4B + 3.3C + .6D + E'],
+        ['Piotroski F-score', m.piotroski === null ? 'Not available' : `${m.piotroski} / 9`, 'Value-company quality screen. Requires prior-year comparison data.', '9 binary profitability, leverage & efficiency tests'],
+        ['PEG ratio', multiple(m.peg), 'P/E divided by expected annual EPS growth percentage.', 'P/E ÷ expected EPS growth'],
+        ['Rule of 40', pct(m.ruleOf40), 'Revenue growth plus EBITDA margin; common growth-company heuristic.', 'Revenue growth + EBITDA margin'],
+        ['DuPont ROE check', pct(m.dupont), 'Net margin × asset turnover × financial leverage.', 'NI / sales × sales / assets × assets / equity'],
+        ['Enterprise value', money(m.enterpriseValue, data.currency), 'Equity value plus debt less cash.', 'Market cap + debt − cash']
+      ];
+
+      const grid = document.querySelector('#formulaGrid');
+      grid.innerHTML = formulas.map(([title, value, description, code], i) => `<article class="formula" data-i="${i}" tabindex="0" role="button" aria-pressed="false"><div class="formula-top"><h3>${escapeHtml(title)}</h3></div><p>${escapeHtml(description)}</p><div class="formula-value ${value === 'Not available' || value === '—' ? 'na' : ''}">${value}</div><span class="formula-code"><code>${escapeHtml(code)}</code></span></article>`).join('');
+
+      const detail = document.querySelector('#formulaDetail');
+      function showDetail(i) {
+        const [title, value, description, code] = formulas[i];
+        detail.innerHTML = `<div><strong>${escapeHtml(title)}</strong><p>${escapeHtml(description)}</p></div><code>${escapeHtml(code)} → ${value}</code>`;
+        grid.querySelectorAll('.formula').forEach((card, idx) => { card.classList.toggle('selected', idx === i); card.setAttribute('aria-pressed', String(idx === i)); });
+      }
+      grid.querySelectorAll('.formula').forEach(card => {
+        card.addEventListener('click', () => showDetail(Number(card.dataset.i)));
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showDetail(Number(card.dataset.i)); } });
+      });
+
+      updateScenarioBase(data, m);
+    }
+
+    const scenarioEls = {
+      range: null, price: null, note: null, pe: null, pfcf: null, graham: null, marketCap: null, buttons: null
+    };
+    let scenarioBase = null;
+    function updateScenarioLab(pctOfBase) {
+      if (!scenarioBase) return;
+      const { data, m } = scenarioBase;
+      const scenarioPrice = data.sharePrice * (pctOfBase / 100);
+      const scenarioMarketCap = scenarioPrice * data.sharesOutstanding;
+      const scenarioPe = divide(scenarioPrice, m.eps);
+      const scenarioPfcf = divide(scenarioMarketCap, m.freeCashFlow);
+      scenarioEls.price.textContent = money(scenarioPrice, data.currency);
+      scenarioEls.pe.textContent = multiple(scenarioPe);
+      scenarioEls.pfcf.textContent = multiple(scenarioPfcf);
+      scenarioEls.marketCap.textContent = money(scenarioMarketCap, data.currency);
+      if (m.grahamIntrinsic) {
+        const diff = (scenarioPrice - m.grahamIntrinsic) / m.grahamIntrinsic;
+        scenarioEls.graham.textContent = `${diff > 0 ? '+' : ''}${(diff * 100).toFixed(0)}% ${diff > 0 ? 'above' : 'below'}`;
+      } else {
+        scenarioEls.graham.textContent = 'Not available';
+      }
+      scenarioEls.buttons.forEach(b => b.classList.toggle('primary', Number(b.dataset.scenario) === Number(pctOfBase)));
+    }
+    function updateScenarioBase(data, m) {
+      if (!data.sharePrice) {
+        scenarioBase = null;
+        scenarioEls.range.disabled = true; scenarioEls.buttons.forEach(b => b.disabled = true);
+        scenarioEls.price.textContent = '—'; scenarioEls.pe.textContent = '—'; scenarioEls.pfcf.textContent = '—'; scenarioEls.graham.textContent = '—'; scenarioEls.marketCap.textContent = '—';
+        scenarioEls.note.textContent = 'Enter a share price on the Analysis page to enable the scenario lab.';
+        return;
+      }
+      scenarioBase = { data, m };
+      scenarioEls.range.disabled = false; scenarioEls.buttons.forEach(b => b.disabled = false);
+      scenarioEls.note.textContent = `Base share price: ${money(data.sharePrice, data.currency)}. Drag or use the buttons to test ±50% moves.`;
+      scenarioEls.range.value = 100;
+      updateScenarioLab(100);
+    }
+    function setupScenarioLab() {
+      scenarioEls.range = document.querySelector('#scenarioRange');
+      scenarioEls.price = document.querySelector('#scenarioPrice');
+      scenarioEls.note = document.querySelector('#scenarioNote');
+      scenarioEls.pe = document.querySelector('#scenarioPe');
+      scenarioEls.pfcf = document.querySelector('#scenarioPfcf');
+      scenarioEls.graham = document.querySelector('#scenarioGraham');
+      scenarioEls.marketCap = document.querySelector('#scenarioMarketCap');
+      scenarioEls.buttons = Array.from(document.querySelectorAll('[data-scenario]'));
+      scenarioEls.range.addEventListener('input', () => updateScenarioLab(Number(scenarioEls.range.value)));
+      scenarioEls.buttons.forEach(btn => btn.addEventListener('click', () => { scenarioEls.range.value = btn.dataset.scenario; updateScenarioLab(Number(btn.dataset.scenario)); }));
+    }
+
+    setupScenarioLab();
+    render();
+    window.addEventListener('storage', event => { if (event.key === DATA_STORAGE_KEY) render(); });
+  </script>
+</body>
+</html>

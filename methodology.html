@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sources, purpose and limitations for every investor formula in StatementLab — Greenblatt, Graham, Altman, Piotroski and more." />
+  <title>Methodology &amp; limitations | StatementLab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,600;0,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #142422; --ink-soft: #405450; --muted: #71817d; --paper: #f5f6f1; --white: #fff;
+      --line: #dce4df; --navy: #173e38; --teal: #15766a; --mint: #dcefe6; --yellow: #dbe86f;
+      --coral: #d96f5e; --orange: #efae5e; --radius: 18px; --shadow: 0 16px 40px rgba(23, 62, 56, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "DM Sans", system-ui, sans-serif; line-height: 1.42; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { max-width: 1360px; margin: 0 auto; padding: 0 27px 44px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 21px 0 17px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; letter-spacing: -.6px; }
+    .brand-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: var(--navy); color: var(--yellow); font: 500 14px "DM Mono", monospace; }
+    .topnav { display: flex; align-items: center; gap: 7px; }
+    .topnav a { color: var(--muted); padding: 7px 9px; text-decoration: none; font-size: 13px; }
+    .topnav a:hover, .topnav a.active { color: var(--teal); font-weight: 700; }
+    .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 9px; background: var(--mint); color: var(--navy); font: 500 10px "DM Mono", monospace; letter-spacing: .04em; }
+    .hero { display: grid; grid-template-columns: 1.35fr .65fr; gap: 34px; align-items: end; padding: 38px 0 24px; }
+    .eyebrow { display: flex; align-items: center; gap: 8px; color: var(--teal); font: 500 11px "DM Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 23px; height: 1px; background: currentColor; }
+    h1 { margin: 12px 0 11px; max-width: 780px; font: 600 clamp(37px, 4.5vw, 60px)/1.03 "Playfair Display", Georgia, serif; letter-spacing: -2px; }
+    .lead { max-width: 710px; margin: 0; color: var(--ink-soft); font-size: 16px; }
+    .notice { padding: 17px 19px; background: var(--mint); border-radius: var(--radius); color: var(--ink-soft); font-size: 12px; }
+    .notice strong { display: block; margin-bottom: 4px; color: var(--navy); font-size: 13px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+    .btn { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: var(--white); color: var(--ink-soft); font-size: 12px; font-weight: 700; }
+    .btn:hover { border-color: var(--teal); color: var(--teal); }
+    .btn.primary { background: var(--navy); border-color: var(--navy); color: white; }
+    .btn.primary:hover { background: var(--teal); border-color: var(--teal); color: white; }
+    .workspace { display: grid; grid-template-columns: minmax(375px, .82fr) minmax(0, 1.18fr); gap: 20px; align-items: start; }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 2px 0 rgba(23,62,56,.01); }
+    .input-panel { overflow: hidden; }
+    .panel-title { padding: 21px 22px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    h2 { margin: 0; font-size: 18px; letter-spacing: -.5px; }
+    .subtext { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .completion { min-width: 99px; text-align: right; }
+    .completion span { display: block; color: var(--teal); font: 500 11px "DM Mono", monospace; }
+    .completion small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .completion-track { width: 100%; height: 5px; margin-top: 6px; overflow: hidden; border-radius: 99px; background: #e5ece8; }
+    .completion-track i { display: block; height: 100%; border-radius: inherit; background: var(--teal); transition: width .25s ease; }
+    .tabs { display: flex; gap: 2px; padding: 10px 11px 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+    .tab { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border: 0; border-bottom: 2px solid transparent; padding: 9px 10px 10px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .tab-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: #cfdad5; }
+    .tab.is-ready .tab-dot { background: var(--teal); }
+    .tab-content { display: none; padding: 18px 21px 22px; }
+    .tab-content.active { display: block; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 12px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    label { display: block; margin-bottom: 5px; color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+    .hint { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    input, select { width: 100%; min-width: 0; padding: 9px 10px; outline: none; border: 1px solid var(--line); border-radius: 8px; background: #fcfdfb; color: var(--ink); font-size: 13px; transition: .15s ease; }
+    input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(21,118,106,.1); }
+    input.invalid { border-color: var(--coral); background: #fff7f4; }
+    .input-prefix { position: relative; }
+    .input-prefix::before { content: attr(data-prefix); position: absolute; z-index: 1; left: 10px; top: 9px; color: var(--muted); font: 12px "DM Mono", monospace; }
+    .input-prefix input { padding-left: 26px; }
+    .form-note { display: flex; gap: 8px; margin-top: 16px; padding: 11px 12px; border-radius: 10px; background: #f4f7f4; color: var(--muted); font-size: 11px; }
+    .form-note b { color: var(--teal); }
+    .results { display: grid; gap: 20px; }
+    .summary { padding: 23px; background: var(--navy); color: white; border-radius: var(--radius); }
+    .summary-head { display: flex; justify-content: space-between; gap: 15px; align-items: flex-start; }
+    .summary h2 { font-size: 21px; }
+    .summary .subtext { color: rgba(255,255,255,.68); }
+    .summary-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-top: 23px; }
+    .summary-metric { border-left: 1px solid rgba(255,255,255,.18); padding-left: 12px; }
+    .summary-metric:first-child { padding-left: 0; border-left: 0; }
+    .summary-metric span { display: block; color: rgba(255,255,255,.61); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; }
+    .summary-metric strong { display: block; margin-top: 4px; color: var(--yellow); font: 500 21px "DM Mono", monospace; letter-spacing: -.7px; }
+    .section { padding: 21px 22px; }
+    .section-head { display: flex; justify-content: space-between; gap: 13px; align-items: baseline; margin-bottom: 15px; }
+    .section-head h2 { font-size: 17px; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 11px; }
+    .ratio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .ratio { padding: 13px; border-radius: 12px; background: #f5f8f5; }
+    .ratio .ratio-label { display: block; min-height: 29px; color: var(--muted); font-size: 11px; line-height: 1.23; }
+    .ratio strong { display: block; margin-top: 7px; color: var(--navy); font: 500 18px "DM Mono", monospace; letter-spacing: -.5px; }
+    .ratio small { display: block; min-height: 14px; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .formula-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .formula { width: 100%; padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: var(--white); color: var(--ink); text-align: left; transition: .18s ease; }
+    .formula:hover, .formula:focus-visible, .formula.selected { border-color: var(--teal); background: #f2f8f5; outline: none; }
+    .formula-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .formula h3 { margin: 0; font-size: 14px; letter-spacing: -.2px; }
+    .formula p { min-height: 34px; margin: 5px 0 11px; color: var(--muted); font-size: 10px; }
+    .formula-value { color: var(--teal); font: 500 24px "DM Mono", monospace; letter-spacing: -1px; }
+    .formula-value.na { color: var(--muted); font-size: 13px; letter-spacing: 0; }
+    .formula-note { margin-top: 7px; color: var(--ink-soft); font-size: 10px; }
+    .formula-code { display: block; margin-top: 9px; color: var(--muted); font: 10px "DM Mono", monospace; line-height: 1.35; }
+    .formula-code code { color: var(--teal); }
+    .formula-detail { display: grid; grid-template-columns: 1.1fr .9fr; gap: 15px; align-items: center; margin-top: 13px; padding: 14px 16px; border-radius: 12px; background: #f4f7f4; }
+    .formula-detail strong { display: block; color: var(--navy); font-size: 13px; }
+    .formula-detail p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .formula-detail code { display: block; color: var(--teal); text-align: right; font: 11px "DM Mono", monospace; }
+    .custom-section { padding: 21px 22px; }
+    .custom-form { display: grid; grid-template-columns: .7fr 1.35fr auto; gap: 9px; align-items: end; padding: 13px; background: var(--sand, #f5f1e5); border-radius: 13px; }
+    .custom-form label { margin: 0 0 5px; }
+    .custom-form .btn { padding: 9px 11px; white-space: nowrap; }
+    .custom-list { display: grid; gap: 7px; margin-top: 11px; }
+    .custom-row { display: grid; grid-template-columns: minmax(100px, .7fr) minmax(100px, 1.1fr) 86px 27px; align-items: center; gap: 9px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .custom-row:last-child { border-bottom: 0; }
+    .custom-name { font-size: 12px; font-weight: 700; }
+    .custom-expression { overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; font: 10px "DM Mono", monospace; }
+    .custom-result { color: var(--teal); text-align: right; font: 500 12px "DM Mono", monospace; }
+    .delete { width: 27px; height: 27px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 18px; }
+    .delete:hover { background: #fff0eb; color: var(--coral); }
+    .formula-help { margin: 12px 0 0; color: var(--muted); font-size: 10px; }
+    .formula-help code { color: var(--teal); font-family: "DM Mono", monospace; }
+    .empty { padding: 12px 0 1px; color: var(--muted); font-size: 12px; }
+    .scenario { padding: 21px 22px; }
+    .scenario-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 19px; align-items: center; }
+    .scenario-price { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+    .scenario-price span { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .scenario-price strong { color: var(--navy); font: 500 22px "DM Mono", monospace; letter-spacing: -.7px; }
+    input[type="range"] { accent-color: var(--teal); padding: 0; border: 0; background: transparent; }
+    .scenario-actions { display: flex; gap: 7px; margin-top: 12px; }
+    .scenario-actions .btn { flex: 1; padding: 7px 8px; font-size: 11px; }
+    .scenario-output { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .scenario-output div { min-height: 73px; padding: 11px; border-radius: 11px; background: var(--mint); }
+    .scenario-output span { display: block; color: var(--ink-soft); font-size: 10px; }
+    .scenario-output strong { display: block; margin-top: 5px; color: var(--navy); font: 500 16px "DM Mono", monospace; }
+    .disclaimer { margin: 0; padding: 14px 18px; border-radius: 12px; background: #f1f3ef; color: var(--muted); font-size: 10px; }
+    .section-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; text-decoration: none; color: inherit; transition: .15s ease; }
+    .section-link:hover { border-color: var(--teal); background: #f2f8f5; }
+    .section-link h2 { font-size: 15px; }
+    .section-link .subtext { margin-top: 3px; max-width: 520px; }
+    .section-link-arrow { flex: 0 0 auto; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--mint); color: var(--navy); font-size: 15px; transition: transform .15s ease; }
+    .section-link:hover .section-link-arrow { transform: translateX(3px); }
+    .toast { position: fixed; z-index: 10; right: 22px; bottom: 22px; max-width: 320px; padding: 12px 14px; border-radius: 11px; background: var(--navy); color: white; box-shadow: var(--shadow); font-size: 12px; opacity: 0; pointer-events: none; transform: translateY(9px); transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .footer { display: flex; justify-content: space-between; gap: 14px; padding: 24px 0 0; color: var(--muted); font-size: 10px; }
+
+    /* ── Paste import ── */
+    .paste-panel { margin-top: 13px; padding: 13px; border-radius: 12px; background: #f4f7f4; border: 1px dashed var(--line); }
+    .paste-panel textarea { width: 100%; min-height: 84px; margin-top: 8px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); color: var(--ink); font: 11px "DM Mono", monospace; resize: vertical; }
+    .paste-panel textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(21,118,106,.1); }
+    .paste-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .paste-head span { color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+    .paste-actions { display: flex; gap: 7px; margin-top: 9px; }
+    .paste-actions .btn { padding: 7px 10px; font-size: 11px; }
+    .paste-result { margin-top: 8px; color: var(--muted); font-size: 10px; }
+    .paste-result.warn { color: var(--coral); }
+    .paste-result.ok { color: var(--teal); }
+    [hidden] { display: none !important; }
+
+    /* ── Data quality check ── */
+    .quality { display: grid; gap: 8px; }
+    .quality-row { display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border-radius: 10px; background: #f5f8f5; font-size: 11px; color: var(--ink-soft); }
+    .quality-row.warn { background: #fff5f1; color: #8a4636; }
+    .quality-row.good { background: var(--mint); color: var(--navy); }
+    .quality-dot { flex: 0 0 auto; width: 7px; height: 7px; margin-top: 3px; border-radius: 50%; background: var(--teal); }
+    .quality-row.warn .quality-dot { background: var(--coral); }
+    .quality-row.good .quality-dot { background: var(--teal); }
+
+    /* ── Trend / YoY comparison ── */
+    .trend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .trend-card { padding: 13px; border-radius: 12px; background: #f5f8f5; }
+    .trend-label { display: block; color: var(--muted); font-size: 11px; }
+    .trend-values { display: flex; align-items: baseline; gap: 7px; margin-top: 7px; }
+    .trend-values strong { color: var(--navy); font: 500 17px "DM Mono", monospace; letter-spacing: -.4px; }
+    .trend-values .prior { color: var(--muted); font-size: 10px; }
+    .trend-delta { display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; padding: 2px 7px; border-radius: 999px; font: 500 10px "DM Mono", monospace; }
+    .trend-delta.up { background: var(--mint); color: var(--navy); }
+    .trend-delta.down { background: #fff0eb; color: var(--coral); }
+    .trend-delta.flat { background: #f0f1ee; color: var(--muted); }
+    .trend-empty { padding: 14px; border-radius: 12px; background: #f5f8f5; color: var(--muted); font-size: 12px; }
+
+    /* ── Methodology ── */
+    .method-list { display: grid; gap: 14px; }
+    .method-item { padding: 15px 17px; border: 1px solid var(--line); border-radius: 13px; }
+    .method-item h3 { margin: 0 0 4px; font-size: 13px; letter-spacing: -.2px; }
+    .method-item p { margin: 4px 0; color: var(--ink-soft); font-size: 11.5px; line-height: 1.5; }
+    .method-item .method-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; color: var(--muted); font-size: 10px; }
+    .method-item .method-meta b { color: var(--teal); font-weight: 700; }
+    .method-item .method-limits { margin-top: 7px; padding: 9px 11px; border-radius: 9px; background: #fff5f1; color: #8a4636; font-size: 10.5px; }
+
+    @media (max-width: 1030px) { .workspace { grid-template-columns: 1fr; } .input-panel { max-width: none; } }
+    @media (max-width: 680px) {
+      .app { padding: 0 15px 30px; } .topnav a { display: none; } .hero { grid-template-columns: 1fr; gap: 18px; padding-top: 33px; } h1 { letter-spacing: -1.5px; }
+      .summary-metrics { grid-template-columns: 1fr 1fr; } .summary-metric:nth-child(3) { border-left: 0; padding-left: 0; } .ratio-grid, .formula-grid { grid-template-columns: 1fr 1fr; } .scenario-grid, .formula-detail { grid-template-columns: 1fr; } .formula-detail code { text-align: left; }
+      .custom-form { grid-template-columns: 1fr; } .custom-form .btn { width: 100%; } .custom-row { grid-template-columns: minmax(80px,.8fr) minmax(80px,1fr) 68px 25px; }
+      .footer { flex-direction: column; } .field-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; }
+      .trend-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+
+    .page-head { padding: 34px 0 22px; }
+    .page-head .eyebrow { margin-bottom: 10px; }
+    .page-head h1 { font-size: clamp(28px, 3.4vw, 40px); max-width: 640px; }
+    .page-head .lead { max-width: 640px; }
+  </style>
+
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">Σ</span> StatementLab</div>
+      <nav class="topnav" aria-label="Primary navigation"><a href="index.html#analysis">Analysis</a><a href="index.html#trend">Trend</a><a href="formulas.html">Formula library</a><a href="index.html#custom-formulas">Custom formulas</a><a class="active" href="methodology.html">Methodology</a><span class="badge">LOCAL · NO DATA UPLOAD</span></nav>
+    </header>
+
+    <section class="page-head">
+      <div class="eyebrow">Financial statement intelligence</div>
+      <h1>Methodology &amp; limitations</h1>
+      <p class="lead">Where each formula in the <a href="formulas.html">formula library</a> comes from, what it was designed to do, and where it breaks down. Read this before treating any single score as a verdict.</p>
+    </section>
+
+    <section class="card section">
+      <div class="section-head"><div><h2>Formula sources &amp; caveats</h2><p>Eight methods, each with a stated intended universe and known limitations.</p></div></div>
+      <div class="method-list" id="methodList"></div>
+    </section>
+
+    <p class="disclaimer" style="margin-top:16px;">StatementLab is an educational portfolio project. These notes summarize well-known public methodologies; they are not a substitute for reading the original sources or a company's actual filings.</p>
+
+    <footer class="footer"><span>© 2026 StatementLab · Financial analysis portfolio project</span><span>All calculations run locally · No inputs leave this browser</span></footer>
+  </main>
+
+  <script>
+    const METHODOLOGY = [
+      { title: 'Joel Greenblatt — earnings yield & return on capital', source: 'Greenblatt, "The Little Book That Beats the Market" (2005)', purpose: 'Ranks companies by cheapness (EBIT ÷ enterprise value) and capital efficiency (EBIT ÷ (net working capital + net fixed assets)) to build a systematic value-and-quality screen.', limits: 'Designed to rank a broad universe of companies against each other, not to judge one company in isolation. The original formulation excludes financials and utilities; enterprise value can be distorted by non-operating items.' },
+      { title: 'Benjamin Graham — Graham number & revised intrinsic value', source: 'Graham, "The Intelligent Investor" and "Security Analysis"', purpose: 'Conservative price ceilings derived from trailing earnings, book value, expected growth and prevailing interest rates.', limits: 'Requires positive EPS and book value per share. The revised formula is sensitive to the growth estimate and bond-yield inputs you supply, and was calibrated to a specific historical interest-rate regime.' },
+      { title: 'Altman Z-score', source: 'Altman (1968), "Financial Ratios, Discriminant Analysis and the Prediction of Corporate Bankruptcy," Journal of Finance', purpose: 'Combines five weighted ratios into a single bankruptcy-risk score.', limits: 'Built and validated on publicly traded manufacturers. Less reliable for financial companies, early-stage businesses, or asset-light service/software companies with little inventory or PP&E.' },
+      { title: 'Piotroski F-score', source: 'Piotroski (2000), "Value Investing: The Use of Historical Financial Statement Information to Separate Winners from Losers," Journal of Accounting Research', purpose: 'Nine binary tests spanning profitability, leverage/liquidity change and operating-efficiency change, aimed at separating financially improving value stocks from deteriorating ones.', limits: 'Needs two consecutive years of complete financials. A high score reflects statement-quality momentum, not cheapness — pair it with a price-based screen such as Graham or Greenblatt.' },
+      { title: 'PEG ratio', source: 'Popularized by Peter Lynch', purpose: 'Normalizes the P/E ratio for expected earnings growth so companies growing at different rates can be compared.', limits: 'Highly sensitive to the growth estimate you enter, which this tool does not independently verify. Unreliable for low-growth, negative-growth or highly cyclical companies.' },
+      { title: 'Rule of 40', source: 'Common growth/SaaS-investing heuristic; no single academic source', purpose: 'Sum of revenue growth and EBITDA margin, used as a quick health check for growth-stage software companies.', limits: 'Only meaningful for subscription/software business models. Not applicable to capital-intensive, cyclical or early pre-revenue businesses.' },
+      { title: 'DuPont ROE decomposition', source: 'Developed at the DuPont Corporation in the early 20th century', purpose: 'Splits return on equity into net margin, asset turnover and financial leverage to show what is actually driving returns.', limits: 'A decomposition, not a standalone valuation signal — high ROE driven mainly by leverage can mask rising financial risk rather than genuine operating strength.' },
+      { title: 'Enterprise value & EV-based multiples (EV/EBIT, EV/EBITDA)', source: 'Standard valuation practice', purpose: 'A capital-structure-neutral basis for comparing companies that carry different levels of debt and cash.', limits: 'Assumes debt and cash figures are current and complete. Off-balance-sheet items such as operating leases, pension obligations or minority interests can distort the calculation if omitted.' }
+    ];
+    function renderMethodology() {
+      document.querySelector('#methodList').innerHTML = METHODOLOGY.map(item => `<article class="method-item"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.purpose)}</p><div class="method-limits"><b>Limitations —</b> ${escapeHtml(item.limits)}</div><div class="method-meta"><span><b>Source:</b> ${escapeHtml(item.source)}</span></div></article>`).join('');
+    }
+
+    function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char])); }
+    document.querySelector('#methodList').innerHTML = METHODOLOGY.map(item => `<article class="method-item"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.purpose)}</p><div class="method-limits"><b>Limitations —</b> ${escapeHtml(item.limits)}</div><div class="method-meta"><span><b>Source:</b> ${escapeHtml(item.source)}</span></div></article>`).join('');
+  </script>
+</body>
+</html>
